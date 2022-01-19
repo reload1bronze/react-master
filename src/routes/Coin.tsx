@@ -219,7 +219,7 @@ function Coin() {
             </OverviewItem>
             <OverviewItem>
               <span>Price:</span>
-              <span>${tickersData?.quotes.USD.price.toFixed(2)}</span>
+              <span>${tickersData?.quotes?.USD?.price?.toFixed(2)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
