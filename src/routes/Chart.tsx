@@ -16,9 +16,14 @@ interface IHistorical {
 interface ChartProps {
   coinId: string;
 }
+
 function Chart({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
-    fetchCoinHistory(coinId)
+  const { isLoading, data } = useQuery<IHistorical[]>(
+    ["ohlcv", coinId],
+    () => fetchCoinHistory(coinId),
+    {
+      refetchInterval: 5000,
+    }
   );
   return (
     <div>
@@ -26,11 +31,14 @@ function Chart({ coinId }: ChartProps) {
         "Loading chart..."
       ) : (
         <ApexChart
-          type="line"
+          type="candlestick"
           series={[
             {
-              name: "Price",
-              data: data?.map((price) => price.close),
+              name: "candle",
+              data: data?.map((price) => ({
+                x: price.time_close,
+                y: [price.open, price.high, price.low, price.close],
+              })),
             },
           ]}
           options={{
@@ -38,25 +46,25 @@ function Chart({ coinId }: ChartProps) {
               mode: "dark",
             },
             chart: {
+              type: "candlestick",
               height: 300,
               width: 500,
-              toolbar: {
-                show: false,
-              },
               background: "transparent",
             },
-            grid: { show: false },
-            stroke: {
-              curve: "smooth",
-              width: 3,
-            },
-            yaxis: {
-              show: false,
+            tooltip: {
+              enabled: true,
             },
             xaxis: {
+              type: "category",
               axisBorder: { show: false },
               axisTicks: { show: false },
               labels: { show: false },
+            },
+            yaxis: {
+              tooltip: {
+                enabled: true,
+              },
+              show: false,
             },
           }}
         />
